@@ -1,7 +1,6 @@
 import { test, expect, Locator, Page } from '@playwright/test';
 
 // test case using getByRole to locate elements and extract data from the cart and checkout pages
-
 type CheckoutData = {
     firstName: string;
     lastName: string;
@@ -28,7 +27,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     const productCartItems = page.locator('[data-test="inventory-item"]');
 
     // Function to extract item data from a given locator
-    const getProducts = async (items: Locator) => {
+    async function getProducts(items: Locator) {
         const count = await items.count();
         const data = [];
 
@@ -41,8 +40,9 @@ test('Verify that the cart information remains consistent from the Cart page to 
                 quantity: (await item.locator('[data-test="item-quantity"]').textContent())?.trim()
             });
         }
+
         return data;
-    };
+    }
 
     // Extract cart data
     const getAllProductCart = await getProducts(productCartItems);
@@ -68,7 +68,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     const checkoutData = await getProducts(getAllProductCheckout);
 
     //Validate that the cart data matches the checkout data
-     expect(getAllProductCart).toEqual(checkoutData);
+    expect(getAllProductCart).toEqual(checkoutData);
 
     // Finish the checkout process
     await page.getByRole('button', { name: 'Finish' }).click();

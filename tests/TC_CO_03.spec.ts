@@ -1,10 +1,10 @@
 import { test, expect, Locator } from '@playwright/test';
 
+// Test case using codegen to locate elements and extract data from the cart and checkout pages
+
 test('Verify that the cart information remains consistent from the Cart page to the Overview page', async ({ page }) => {
   await page.goto('https://www.saucedemo.com/');
-  await page.locator('[data-test="username"]').click();
   await page.locator('[data-test="username"]').fill('standard_user');
-  await page.locator('[data-test="password"]').click();
   await page.locator('[data-test="password"]').fill('secret_sauce');
   await page.locator('[data-test="login-button"]').click();
 
