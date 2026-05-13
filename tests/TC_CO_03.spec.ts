@@ -2,6 +2,12 @@ import { test, expect, Locator } from '@playwright/test';
 
 // Test case using codegen to locate elements and extract data from the cart and checkout pages
 
+type Product = {
+  name: string | null;
+  price: string | null;
+  quantity: string | null;
+};
+
 test('Verify that the cart information remains consistent from the Cart page to the Overview page', async ({ page }) => {
   await page.goto('https://www.saucedemo.com/');
   await page.locator('[data-test="username"]').fill('standard_user');
@@ -16,17 +22,18 @@ test('Verify that the cart information remains consistent from the Cart page to 
   const productCartItems = page.locator('[data-test="inventory-item"]');
 
   // Function to extract item data from a given locator
-  const getItemsData = async (items : Locator) => {
+  const getItemsData = async (items: Locator): Promise<Product[]> => {
   const count = await items.count();
-  const data = [];
+  const data: Product[] = [];
+
 
   for (let i = 0; i < count; i++) {
     const item = items.nth(i);
 
     data.push({
-      name: (await item.locator('[data-test="inventory-item-name"]').textContent())?.trim(),
-      price: (await item.locator('[data-test="inventory-item-price"]').textContent())?.trim(),
-      quantity: (await item.locator('[data-test="item-quantity"]').textContent())?.trim()
+      name: (await item.locator('[data-test="inventory-item-name"]').textContent())?.trim() || null,
+      price: (await item.locator('[data-test="inventory-item-price"]').textContent())?.trim() || null,
+      quantity: (await item.locator('[data-test="item-quantity"]').textContent())?.trim() || null
     });
   }
 
