@@ -1,5 +1,6 @@
 import { test, expect, Page, Locator } from '@playwright/test';
 
+// Test case using the error_user to detect defect and verify that the cart information remains consistent from the Cart page to the Overview page.
 type Product = {
   name: string | null;
   price: string | null;
@@ -12,6 +13,7 @@ type CheckoutData = {
   zip: string;
 };
 
+// The function to extract product data from a given locator
 const getProducts = async (items: Locator): Promise<Product[]> => {
   const count = await items.count();
   const data: Product[] = [];
@@ -29,6 +31,7 @@ const getProducts = async (items: Locator): Promise<Product[]> => {
   return data;
 };
 
+// Function to add a product to the cart
 const addProductToCart = async (page: Page, productName: string) => {
   const item = page.locator('[data-test="inventory-item"]').filter({ hasText: productName });
   const addBtn = item.getByRole('button', { name: 'Add to cart' });
@@ -39,6 +42,7 @@ const addProductToCart = async (page: Page, productName: string) => {
   await addBtn.click();
 };
 
+// Function to fill checkout information
 const fillCheckoutInformation = async (page: Page, data: CheckoutData) => {
   await page.getByRole('textbox', { name: 'First Name' }).fill(data.firstName);
   await page.getByRole('textbox', { name: 'Last Name' }).fill(data.lastName);
@@ -57,12 +61,14 @@ test('Verify that the cart information remains consistent from the Cart page to 
     await expect(page).toHaveURL(/inventory/);
   });
 
+  // Add product to cart and verify badge count
   await test.step('Add product to cart', async () => {
     await addProductToCart(page, 'Sauce Labs Backpack');
 
     await expect(page.locator('[data-test="shopping-cart-badge"]')).toHaveText('1');
   });
 
+  // Capture cart data before checkout
   await test.step('Go to cart and capture data', async () => {
 
     await page.locator('[data-test="shopping-cart-link"]').click();
@@ -73,6 +79,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     (test.info() as any).cartData = await getProducts(cartItems);
   });
 
+  // Checkout and fill information
   await test.step('Checkout and fill information', async () => {
     await page.getByRole('button', { name: 'Checkout' }).click();
 
@@ -83,6 +90,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     });
   });
 
+  // Verify data on Overview page
   await test.step('Verify data on Overview page', async () => {
     const overviewItems = page.locator('[data-test="inventory-item"]');
     const overviewData = await getProducts(overviewItems);
@@ -90,6 +98,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     expect(overviewData).toEqual((test.info() as any).cartData);
   });
 
+  // Finish order and verify completion
   await test.step('Finish order', async () => {
 
     const finishBtn = page.getByRole('button', {name: 'Finish'});

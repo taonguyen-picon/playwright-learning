@@ -9,7 +9,7 @@ type CheckoutData = {
 
 test('Verify that the cart information remains consistent from the Cart page to the Overview page', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
-    await page.getByRole('textbox', { name: 'username' }).fill('standard_user');
+    await page.getByRole('textbox', { name: 'username' }).fill('performance_glitch_user');
     await page.getByRole('textbox', { name: 'password' }).fill('secret_sauce');
     await page.getByRole('button', { name: 'Login' }).click();
 
@@ -27,19 +27,20 @@ test('Verify that the cart information remains consistent from the Cart page to 
     const productCartItems = page.locator('[data-test="inventory-item"]');
 
     // Function to extract item data from a given locator
+
     async function getProducts(items: Locator) {
         const count = await items.count();
         const data = [];
 
-        for (let i = 0; i < count; i++) {
-            const item = items.nth(i);
+            for (let i = 0; i < count; i++) {
+                const item = items.nth(i);
 
-            data.push({
-                name: (await item.locator('[data-test="inventory-item-name"]').textContent())?.trim(),
-                price: (await item.locator('[data-test="inventory-item-price"]').textContent())?.trim(),
-                quantity: (await item.locator('[data-test="item-quantity"]').textContent())?.trim()
-            });
-        }
+                data.push({
+                    name: (await item.locator('[data-test="inventory-item-name"]').textContent())?.trim(),
+                    price: (await item.locator('[data-test="inventory-item-price"]').textContent())?.trim(),
+                    quantity: (await item.locator('[data-test="item-quantity"]').textContent())?.trim()
+                });
+            }
 
         return data;
     }
@@ -68,7 +69,7 @@ test('Verify that the cart information remains consistent from the Cart page to 
     const checkoutData = await getProducts(getAllProductCheckout);
 
     //Validate that the cart data matches the checkout data
-    expect(getAllProductCart).toEqual(checkoutData);
+     expect(getAllProductCart).toEqual(checkoutData);
 
     // Finish the checkout process
     await page.getByRole('button', { name: 'Finish' }).click();
