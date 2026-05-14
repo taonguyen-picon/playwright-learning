@@ -9,7 +9,7 @@ type CheckoutData = {
 
 test('Verify that the cart information remains consistent from the Cart page to the Overview page', async ({ page }) => {
     await page.goto('https://www.saucedemo.com/');
-    await page.getByRole('textbox', { name: 'username' }).fill('performance_glitch_user');
+    await page.getByRole('textbox', { name: 'username' }).fill('standard_user');
     await page.getByRole('textbox', { name: 'password' }).fill('secret_sauce');
     await page.getByRole('button', { name: 'Login' }).click();
 
